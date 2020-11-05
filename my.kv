@@ -1,0 +1,24 @@
+<TopicScreen>
+    topic: topic
+    topicSelected: container
+
+    FloatLayout:
+        size: root.width, root.height
+
+        ScrollView:
+            size_hint: 1, 0.9
+            pos_hint: {'x': 0, 'center_y': .6}
+            MDList:
+                id: container
+                on_touch_down: root.topicClicked()
+
+        TextInput:
+            id: topic
+            multinline: False
+            size_hint: 0.5, 0.2
+            pos_hint: {'x': 0, 'center_y': .1}
+        Button:
+            text: 'Add Topic'
+            size_hint: 0.5, 0.2
+            pos_hint: {'right': 1, 'center_y': .1}
+            on_press: root.addBtn()
