@@ -1,24 +1,95 @@
-<TopicScreen>
-    topic: topic
-    topicSelected: container
+WindowManager:
+    SubjectScreen:
+    TopicScreen:
 
-    FloatLayout:
-        size: root.width, root.height
+<SelectableLabel>:
+    # Draw a background to indicate selection
+    canvas.before:
+        Color:
+            rgba: (.0, 0.9, .1, .3) if self.selected else (0, 0, 0, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
 
-        ScrollView:
-            size_hint: 1, 0.9
-            pos_hint: {'x': 0, 'center_y': .6}
-            MDList:
-                id: container
-                on_touch_down: root.topicClicked()
+<SubjectScreen>:
+    name: "SubjectScr"
+    subject: subject
+    BoxLayout:
+        orientation: "vertical"
+
+        BoxLayout:
+            RecycleView:
+                viewclass: 'SelectableLabel'
+                data : [{'text': str(x)} for x in root.subjects]
+                SelectableRecycleBoxLayout:
+                    cols: 1
+                    default_size: None, dp(56)
+                    default_size_hint: 1, None
+                    size_hint_y: None
+                    height: self.minimum_height
+                    orientation: 'vertical'
+                    multiselect: True
+                    touch_multiselect: True
+                    on_touch_down:
+                        app.root.current = "TopicScr"
+                        root.manager.transition.direction = 'left'
 
         TextInput:
-            id: topic
+            id: subject
             multinline: False
-            size_hint: 0.5, 0.2
-            pos_hint: {'x': 0, 'center_y': .1}
+            size_hint: 1, 0.2
         Button:
-            text: 'Add Topic'
-            size_hint: 0.5, 0.2
-            pos_hint: {'right': 1, 'center_y': .1}
-            on_press: root.addBtn()
+            text: 'Add Subject'
+            size_hint: 1, 0.2
+            on_release: root.addSubjectBtn()
+        Button:
+            text: 'Update/Delete Subject'
+            size_hint: 1, 0.2
+            on_release: root.openSubPopup()
+
+<TopicScreen>:
+    name: "TopicScr"
+    Button:
+        text: 'Back'
+        size_hint: 1, 0.6
+        on_press:
+            app.root.current = "SubjectScr"
+            root.manager.transition.direction = 'right'
+    Button:
+        text: 'Add Topic'
+        size_hint: 1, 0.2
+        on_press: root.addTopicBtn()
+
+<SubPopup>:
+    title: 'Update/Delete Subject (Fill out both fields to update subject or fill out Enter current Subject name and click delete subject to delete subject'
+    auto_dismiss: False
+    currentSub: currentSub
+    newSub: newSub
+    BoxLayout:
+        orientation: "vertical"
+        Label:
+            text: 'Enter current Subject name'
+            size_hint: 1, 0.2
+        TextInput:
+            id: currentSub
+            multinline: False
+            size_hint: 1, 0.2
+        Label:
+            text: 'Enter new Subject name'
+            size_hint: 1, 0.2
+        TextInput:
+            id: newSub
+            multinline: False
+            size_hint: 1, 0.2
+        Button:
+            text: 'Update Subject'
+            size_hint: 1, 0.2
+            on_release: root.updateSubject()
+        Button:
+            text: 'Delete Subject'
+            size_hint: 1, 0.2
+            on_release: root.deleteSubject()
+        Button:
+            text: 'Close Popup'
+            size_hint: 1, 0.1
+            on_release: root.dismiss()
