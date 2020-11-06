@@ -49,16 +49,39 @@ WindowManager:
 
 <TopicScreen>:
     name: "TopicScr"
-    Button:
-        text: 'Back'
-        size_hint: 1, 0.6
-        on_press:
-            app.root.current = "SubjectScr"
-            root.manager.transition.direction = 'right'
-    Button:
-        text: 'Add Topic'
-        size_hint: 1, 0.2
-        on_press: root.addTopicBtn()
+    topic: topic
+
+    BoxLayout:
+        orientation: "vertical"
+
+        BoxLayout:
+            RecycleView:
+                viewclass: 'SelectableLabel'
+                data : [{'text': str(x)} for x in root.topics]
+                SelectableRecycleBoxLayout:
+                    cols: 1
+                    default_size: None, dp(56)
+                    default_size_hint: 1, None
+                    size_hint_y: None
+                    height: self.minimum_height
+                    orientation: 'vertical'
+                    multiselect: True
+                    touch_multiselect: True
+
+        TextInput:
+            id: topic
+            multinline: False
+            size_hint: 1, 0.2
+        Button:
+            text: 'Add Topic'
+            size_hint: 1, 0.2
+            on_press: root.addTopicBtn()
+        Button:
+            text: 'Back'
+            size_hint: 1, 0.1
+            on_press:
+                app.root.current = "SubjectScr"
+                root.manager.transition.direction = 'right'
 
 <SubPopup>:
     title: 'Update/Delete Subject (Fill out both fields to update subject or fill out Enter current Subject name and click delete subject to delete subject'
