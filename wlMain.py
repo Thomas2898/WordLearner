@@ -1,53 +1,16 @@
 from kivy.app import App
 from kivy.lang import Builder
+from kivy.uix.popup import Popup
 from kivy.uix.recycleview import RecycleView
 from kivy.uix.recycleview.views import RecycleDataViewBehavior
 from kivy.uix.label import Label
+from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.button import Button
 from kivy.properties import BooleanProperty, ObjectProperty, ListProperty
 from kivy.uix.recycleboxlayout import RecycleBoxLayout
 from kivy.uix.behaviors import FocusBehavior
 from kivy.uix.recycleview.layout import LayoutSelectionBehavior
 from kivy.uix.widget import Widget
-
-Builder.load_string('''
-<SelectableLabel>:
-    # Draw a background to indicate selection
-    canvas.before:
-        Color:
-            rgba: (.0, 0.9, .1, .3) if self.selected else (0, 0, 0, 1)
-        Rectangle:
-            pos: self.pos
-            size: self.size
-            
-<SubjectScreen>:
-    subject: subject
-    BoxLayout:
-        orientation: "vertical"
-                
-        BoxLayout:
-            RecycleView:
-                viewclass: 'SelectableLabel'
-                data : [{'text': str(x)} for x in root.subjects]
-                SelectableRecycleBoxLayout:
-                    cols: 1
-                    default_size: None, dp(56)
-                    default_size_hint: 1, None
-                    size_hint_y: None
-                    height: self.minimum_height
-                    orientation: 'vertical'
-                    multiselect: True
-                    touch_multiselect: True  
-                    
-        TextInput:
-            id: subject
-            multinline: False
-            size_hint: 1, 0.2
-        Button:
-            text: 'Add Subject'
-            size_hint: 1, 0.2
-            on_press: root.addSubjectBtn()
-''')
 
 #Where i learned how to get the labels selectable using a recycleview
 #https://kivy.org/doc/stable/api-kivy.uix.recycleview.html
@@ -88,8 +51,20 @@ class SelectableLabel(RecycleDataViewBehavior, Label):
         else:
             print("selection removed for {0}".format(SubjectScreen.data[index]))
 
+class SubPopup(Popup):
+    currentSub = ObjectProperty(None)
+    newSub = ObjectProperty(None)
 
-class SubjectScreen(RecycleView):
+    def updateSubject(self):
+        print("Entered updateSubject")
+        print(self.currentSub.text)
+        print(self.newSub.text)
+
+    def deleteSubject(self):
+        print("Entered deleteSubject")
+        print(self.currentSub.text)
+
+class SubjectScreen(Screen):
     subjects = ListProperty([])
     subject = ObjectProperty(None)
 
@@ -108,9 +83,31 @@ class SubjectScreen(RecycleView):
         else:
             self.subjects.append(self.subject.text)
 
-class myApp(App):
+    #Used to open a pop up window that will aloow the user to update and delete subjects
+    def openSubPopup(self):
+        pops = SubPopup()
+        pops.open()
+
+
+class TopicScreen(Screen):
+    print("Moving to TopicScreen")
+
+    def addTopicBtn(self):
+        print("Add topic btn works")
+
+    def getTopics(self):
+        self.subjects = [{'text': str(x)} for x in range(20)]
+        #self.data.append({'text': str("Hello it works")})
+    pass
+
+class WindowManager(ScreenManager):
+    pass
+
+kv = Builder.load_file("my.kv")
+
+class wlApp(App):
     def build(self):
-        return SubjectScreen()
+        return kv
 
 if __name__ == '__main__':
-    myApp().run()
+    wlApp().run()
