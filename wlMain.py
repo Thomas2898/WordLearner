@@ -91,12 +91,23 @@ class SubjectScreen(Screen):
 
 class TopicScreen(Screen):
     print("Moving to TopicScreen")
+    topics = ListProperty([])
+    topic = ObjectProperty(None)
+
+    def __init__(self, **kwargs):
+        super(TopicScreen, self).__init__(**kwargs)
+        self.getTopics()
 
     def addTopicBtn(self):
         print("Add topic btn works")
+        if self.topic.text in self.topics:
+            print("Already exists")
+        else:
+            self.topics.append(self.topic.text)
 
     def getTopics(self):
-        self.subjects = [{'text': str(x)} for x in range(20)]
+        print("In getTopics")
+        self.topics = [{'text': str(x)} for x in range(20)]
         #self.data.append({'text': str("Hello it works")})
     pass
 
