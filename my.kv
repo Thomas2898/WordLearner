@@ -1,8 +1,21 @@
 WindowManager:
     SubjectScreen:
+        id: SubjectScreen
+        name: "SubjectScr"
     TopicScreen:
+        id: TopicScreen
+        name: "TopicScr"
 
-<SelectableLabel>:
+<SelectableLabelSubjectScreen>:
+    # Draw a background to indicate selection
+    canvas.before:
+        Color:
+            rgba: (.0, 0.9, .1, .3) if self.selected else (0, 0, 0, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<SelectableLabelTopicScreen>:
     # Draw a background to indicate selection
     canvas.before:
         Color:
@@ -14,12 +27,18 @@ WindowManager:
 <SubjectScreen>:
     name: "SubjectScr"
     subject: subject
+    subjectLabel: subjectLabel
     BoxLayout:
         orientation: "vertical"
 
+        Label:
+            id: subjectLabel
+            text: 'No Subject selected'
+            size_hint: 1, 0.1
+
         BoxLayout:
             RecycleView:
-                viewclass: 'SelectableLabel'
+                viewclass: 'SelectableLabelSubjectScreen'
                 data : [{'text': str(x)} for x in root.subjects]
                 SelectableRecycleBoxLayout:
                     cols: 1
@@ -41,7 +60,7 @@ WindowManager:
         Button:
             text: 'Add Subject'
             size_hint: 1, 0.2
-            on_release: root.addSubjectBtn()
+            on_release: root.getSubjectSelected()
         Button:
             text: 'Update/Delete Subject'
             size_hint: 1, 0.2
@@ -56,7 +75,7 @@ WindowManager:
 
         BoxLayout:
             RecycleView:
-                viewclass: 'SelectableLabel'
+                viewclass: 'SelectableLabelTopicScreen'
                 data : [{'text': str(x)} for x in root.topics]
                 SelectableRecycleBoxLayout:
                     cols: 1
@@ -80,6 +99,7 @@ WindowManager:
             text: 'Back'
             size_hint: 1, 0.1
             on_press:
+                root.testTopic()
                 app.root.current = "SubjectScr"
                 root.manager.transition.direction = 'right'
 
